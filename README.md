@@ -27,8 +27,8 @@
 [Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
 
 # Content 1
-Dockerize the NestJS starter App.  
-https://www.youtube.com/watch?v=BrlQthcUHGw
+Dockerize the NestJS starter App. 
+
 
 # Content 2
 - Add a docker-compose file and run also a postgres db
@@ -53,8 +53,8 @@ Run:
 `docker run -p 8080:3000 <<user>/project-name>`
 
 For Example:  
-`docker build <your path> -t thomas-oliver/nestjs-dockerized`  
-`docker run -p 8080:3000 thomas-oliver/nestjs-dockerized`
+`docker build <your path> -t elisha1994/store-management`  
+`docker run -p 8080:3000 elisha1994/store-management`
 
 Basic Docker Commands:  
 List your docker images: `docker images`  
