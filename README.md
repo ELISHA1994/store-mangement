@@ -26,15 +26,6 @@
 
 [Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
 
-# Content 1
-Dockerize the NestJS starter App. 
-
-
-# Content 2
-- Add a docker-compose file and run also a postgres db
-- Connect with NestJS to the db
-- Post Data && Get Data over http (to NestJS) and then save it in the db
-
 # You need
 - NPM
 - Node.js
@@ -44,6 +35,10 @@ Dockerize the NestJS starter App.
 # Start Commands for docker-compose file
 Builds, (re)creates, starts, and attaches to containers for a service.  
 `docker-compose up`
+Information:
+- Database can be accessed with PG-Admin via `localhost:5050` and then connect your database
+- NestJS Api can be accessed on `localhost:8080/api` 
+
 
 # Start Commands for Docker
 Build your image:  
