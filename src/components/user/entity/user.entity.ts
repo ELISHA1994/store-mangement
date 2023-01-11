@@ -4,31 +4,33 @@ import {
   Column,
   CreateDateColumn,
   UpdateDateColumn,
+  BeforeInsert,
 } from 'typeorm';
 
 @Entity()
 export class User {
   @PrimaryGeneratedColumn()
-  public id!: number;
+  id: number;
 
-  @Column({ type: 'varchar', length: 120, unique: true })
-  public email: string;
+  @Column()
+  name: string;
+
+  @Column({ unique: true })
+  email: string;
 
   @Column({
-    type: 'text',
+    select: false,
   })
-  public password: string;
-
-  @Column({ type: 'boolean', default: false })
-  public isDeleted: boolean;
-
-  /*
-   * Create and Update Date Columns
-   */
+  password: string;
 
   @CreateDateColumn({ type: 'timestamp' })
   public createdAt!: Date;
 
   @UpdateDateColumn({ type: 'timestamp' })
   public updatedAt!: Date;
+
+  @BeforeInsert()
+  emailToLowerCase() {
+    this.email = this.email.toLowerCase();
+  }
 }
