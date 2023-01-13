@@ -20,8 +20,18 @@ export class User {
 
   @Column({
     select: false,
+    nullable: true,
   })
-  password: string;
+  password?: string;
+
+  @Column({
+    select: false,
+    nullable: true,
+  })
+  currentHashedRefreshToken?: string;
+
+  @Column({ default: false })
+  isRegisteredWithGoogle: boolean;
 
   @CreateDateColumn({ type: 'timestamp' })
   public createdAt!: Date;

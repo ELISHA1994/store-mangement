@@ -8,6 +8,7 @@ import { getEnvPath } from './common/helper/env.helper';
 import { UserModule } from './components/user/user.module';
 import { AuthModule } from './components/auth/auth.module';
 import { DatabaseModule } from './database/database.module';
+import { GoogleModule } from './components/google/google.module';
 
 const envFilePath: string = getEnvPath(`${__dirname}/common/envs`);
 
@@ -17,6 +18,7 @@ const envFilePath: string = getEnvPath(`${__dirname}/common/envs`);
     DatabaseModule,
     UserModule,
     AuthModule,
+    GoogleModule,
   ],
   controllers: [AppController],
   providers: [AppService],
