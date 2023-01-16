@@ -1,39 +1,31 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
+import { HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import * as bcrypt from 'bcryptjs';
-import { Repository } from 'typeorm';
+import { UserRepositoryInterface } from './interface/user.repository.interface';
 import { User } from './entity/user.entity';
 import { RegisterDto } from '../auth/dto/register.dto';
-import { LoginUserDto } from '../auth/dto/login.dto';
-import { ResetPasswordDto } from '../auth/dto/reset-password.dto';
 import { UpdatePasswordDto } from './dto/updatePassword.dto';
 
 @Injectable()
 export class UsersService {
   constructor(
-    @InjectRepository(User)
-    private readonly usersRepository: Repository<User>,
+    @Inject('UserRepositoryInterface')
+    private readonly userRepository: UserRepositoryInterface,
   ) {}
 
   async create(userDto: RegisterDto): Promise<User> {
-    const newUser = await this.usersRepository.create(userDto);
-    await this.usersRepository.save(newUser);
-    return newUser;
+    return await this.userRepository.create(userDto);
   }
 
   async createWithGoogle(email: string, name: string) {
-    const newUser = await this.usersRepository.create({
+    return await this.userRepository.create({
       email,
       name,
       isRegisteredWithGoogle: true,
     });
-
-    await this.usersRepository.save(newUser);
-    return newUser;
   }
 
   async getByEmail(email: string): Promise<User> {
-    const user = await this.usersRepository.findOne({
+    const user = await this.userRepository.findByCondition({
       where: { email: email },
       select: ['id', 'email', 'name', 'password'],
     });
@@ -49,10 +41,10 @@ export class UsersService {
   }
 
   async resetUserPassword(id: number, passwordDto: UpdatePasswordDto) {
-    await this.usersRepository.update(id, {
+    await this.userRepository.update(id, {
       password: passwordDto.passwordHash,
     });
-    const updatedUser = await this.usersRepository.findOne({ where: { id } });
+    const updatedUser = await this.userRepository.findOneById(id);
     if (updatedUser) {
       return updatedUser;
     }
@@ -60,7 +52,7 @@ export class UsersService {
   }
 
   async getById(id: number) {
-    const user = await this.usersRepository.findOne({ where: { id } });
+    const user = await this.userRepository.findOneById(id);
     if (user) {
       return user;
     }
@@ -71,7 +63,7 @@ export class UsersService {
   }
 
   async getUserIfRefreshTokenMatches(refreshToken: string, userId: number) {
-    const user = await this.usersRepository.findOne({
+    const user = await this.userRepository.findByCondition({
       where: { id: userId },
       select: ['id', 'email', 'name', 'password', 'currentHashedRefreshToken'],
     });
@@ -88,13 +80,13 @@ export class UsersService {
 
   async setCurrentRefreshToken(refreshToken: string, userId: number) {
     const currentHashedRefreshToken = await bcrypt.hash(refreshToken, 10);
-    await this.usersRepository.update(userId, {
+    await this.userRepository.update(userId, {
       currentHashedRefreshToken,
     });
   }
 
   async removeRefreshToken(userId: number) {
-    return this.usersRepository.update(userId, {
+    return this.userRepository.update(userId, {
       currentHashedRefreshToken: null,
     });
   }

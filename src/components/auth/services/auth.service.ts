@@ -2,6 +2,7 @@ import {
   BadRequestException,
   HttpException,
   HttpStatus,
+  Inject,
   Injectable,
 } from '@nestjs/common';
 import * as bcrypt from 'bcryptjs';
@@ -15,6 +16,8 @@ import { ResetPasswordDto } from '../dto/reset-password.dto';
 
 @Injectable()
 export class AuthService {
+  // @Inject(ConfigService)
+
   constructor(
     private readonly usersService: UsersService,
     private readonly jwtService: JwtService,
@@ -54,11 +57,16 @@ export class AuthService {
 
   public getCookieWithJwtToken(userId: number) {
     const payload: TokenPayload = { userId };
+    const secret = this.configService.get('JWT_SECRET');
+    const expiresIn = `${this.configService.get<string>(
+      'JWT_EXPIRATION_TIME',
+    )}s`;
+    console.log('Secret', secret);
+    console.log('ExpiresIn', expiresIn);
+
     const token = this.jwtService.sign(payload, {
-      secret: this.configService.get<string>('JWT_ACCESS_TOKEN_SECRET'),
-      expiresIn: `${this.configService.get<string>(
-        'JWT_ACCESS_TOKEN_EXPIRATION_TIME',
-      )}s`,
+      secret: this.configService.get<string>('JWT_SECRET'),
+      expiresIn: `${this.configService.get<string>('JWT_EXPIRATION_TIME')}s`,
     });
     return `Authentication=${token}; HttpOnly; Path=/; Max-Age=${this.configService.get(
       'JWT_EXPIRATION_TIME',
@@ -98,7 +106,7 @@ export class AuthService {
   public getCookieForLogOut() {
     return [
       'Authentication=; HttpOnly; Path=/; Max-Age=0',
-      'Refresh=; HttpOnly; Path=/; Max-Age=0'
+      'Refresh=; HttpOnly; Path=/; Max-Age=0',
     ];
   }
 
