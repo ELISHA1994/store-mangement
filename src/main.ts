@@ -8,7 +8,7 @@ import { NestExpressApplication } from '@nestjs/platform-express';
 import { AppModule } from './app.module';
 import { APIPrefix } from './constant/constant';
 import getLogLevels from './shared/utils/getLogLevels';
-import CustomLogger from './logs/customLogger';
+import CustomLogger from './logger/customLogger';
 
 async function bootstrap() {
   const app: NestExpressApplication = await NestFactory.create(AppModule, {

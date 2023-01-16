@@ -12,7 +12,7 @@ import { StoreModule } from './components/store/store.module';
 import { GeneralExceptionFilter } from './shared/filters';
 import { StandardResponseInterceptor } from './shared/interceptors';
 import { LoggerMiddleware } from './middleware/logger.middleware';
-import { LoggerModule } from './logs/logger.module';
+import { LoggerModule } from './logger/logger.module';
 
 const envFilePath: string = getEnvPath(`${__dirname}/common/envs`);
 
