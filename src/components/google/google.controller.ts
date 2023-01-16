@@ -2,8 +2,10 @@ import { Body, Controller, Post, Req } from '@nestjs/common';
 import { GoogleService } from './google.service';
 import { TokenVerificationDto } from './dto/tokenVerification.dto';
 import { Request } from 'express';
+import { ApiTags } from '@nestjs/swagger';
 
 @Controller('google-authentication')
+@ApiTags('google-authentication')
 export class GoogleController {
   constructor(private readonly googleAuthService: GoogleService) {}
 

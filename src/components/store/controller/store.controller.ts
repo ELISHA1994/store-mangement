@@ -15,8 +15,18 @@ import { DistanceService } from '../service/distance.service';
 import { CreateStoreDto } from '../dto/create-store.dto';
 import { UpdateStoreDto } from '../dto/update-store.dto';
 import JwtAuthenticationGuard from '../../auth/guard/jwt-authentication.guard';
+import {
+  ApiBody,
+  ApiOperation,
+  ApiParam,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
+import { Store } from '../entity/store.entity';
+import { CalDistanceDto } from '../dto/cal-distance.dto';
 
 @Controller('store')
+@ApiTags('store')
 export class StoreController {
   constructor(
     private readonly storeService: StoreService,
@@ -25,12 +35,35 @@ export class StoreController {
 
   @Get()
   @HttpCode(200)
+  @ApiOperation({
+    summary: 'List all store',
+    description: 'List all store',
+  })
   @UseGuards(JwtAuthenticationGuard)
   async getAllStores() {
     return await this.storeService.findAll();
   }
 
   @Get('/:id')
+  @ApiOperation({
+    summary: 'Get a store',
+    description: 'Get a store details from database',
+  })
+  @ApiParam({
+    name: 'id',
+    required: true,
+    description: 'Should be an id of a store that exists in the database',
+    type: Number,
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'A store has been successfully fetched',
+    type: Store,
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'A store with given id does not exist.',
+  })
   @HttpCode(200)
   @UseGuards(JwtAuthenticationGuard)
   async getStore(@Param() id) {
@@ -39,6 +72,11 @@ export class StoreController {
 
   @Post('add')
   @HttpCode(201)
+  @ApiBody({ type: CreateStoreDto })
+  @ApiOperation({
+    summary: 'Add a new store',
+    description: 'Create a new store',
+  })
   @UseGuards(JwtAuthenticationGuard)
   async createStore(@Body() createStoreDto: CreateStoreDto) {
     return await this.storeService.create(createStoreDto);
@@ -46,6 +84,17 @@ export class StoreController {
 
   @Put('update/:id')
   @HttpCode(200)
+  @ApiBody({ type: UpdateStoreDto })
+  @ApiOperation({
+    summary: 'Update a store',
+    description: 'Update a store',
+  })
+  @ApiParam({
+    name: 'id',
+    required: true,
+    description: 'Should be an id of a store that exists in the database',
+    type: Number,
+  })
   @UseGuards(JwtAuthenticationGuard)
   async updateStore(
     @Param('id') id,
@@ -59,6 +108,16 @@ export class StoreController {
 
   @Delete('delete/:id')
   @HttpCode(200)
+  @ApiOperation({
+    summary: 'Delete a store',
+    description: 'Create a new store',
+  })
+  @ApiParam({
+    name: 'id',
+    required: true,
+    description: 'Should be an id of a store that exists in the database',
+    type: Number,
+  })
   @UseGuards(JwtAuthenticationGuard)
   async deleteStore(@Param('id') id) {
     return await this.storeService.remove(Number(id));
@@ -66,17 +125,17 @@ export class StoreController {
 
   @Post('distance')
   @UseGuards(JwtAuthenticationGuard)
-  async calculateDistance(
-    @Body('startLatitude') startLatitude: number,
-    @Body('startLongitude') startLongitude: number,
-    @Body('endLatitude') endLatitude: number,
-    @Body('endLongitude') endLongitude: number,
-  ) {
+  @ApiBody({ type: CalDistanceDto })
+  @ApiOperation({
+    summary: 'Calculate Distance',
+    description: 'Calculate distance between stores',
+  })
+  async calculateDistance(@Body() calDistanceDto: CalDistanceDto) {
     return await this.distanceService.calculateDistance(
-      startLatitude,
-      startLongitude,
-      endLatitude,
-      endLongitude,
+      calDistanceDto.startLatitude,
+      calDistanceDto.startLongitude,
+      calDistanceDto.endLatitude,
+      calDistanceDto.endLongitude,
     );
   }
 }

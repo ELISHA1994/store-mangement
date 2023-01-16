@@ -17,8 +17,12 @@ import JwtAuthenticationGuard from '../guard/jwt-authentication.guard';
 import { ResetPasswordDto } from '../dto/reset-password.dto';
 import { UsersService } from '../../user/user.service';
 import JwtRefreshGuard from '../guard/jwt-refresh.guard';
+import { ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { User } from '../../user/entity/user.entity';
+import { LoginUserDto } from "../dto/login.dto";
 
 @Controller('auth')
+@ApiTags('auth')
 export class AuthController {
   constructor(
     private readonly authService: AuthService,
@@ -26,14 +30,28 @@ export class AuthController {
   ) {}
 
   @Post('register')
+  @ApiBody({ type: RegisterDto })
+  @ApiOperation({
+    summary: 'Register a new user',
+    description: 'Create a new user and return user with JWT token',
+  })
+  @ApiResponse({
+    status: 201,
+    description: '',
+    type: User,
+  })
   async register(@Body() createUserDto: RegisterDto) {
     return await this.authService.register(createUserDto);
-    // Todo: Email confirmation integration
   }
 
   @HttpCode(200)
   @UseGuards(LocalAuthenticationGuard)
   @Post('log-in')
+  @ApiOperation({
+    summary: 'Login a user',
+    description: 'Create user JWT token',
+  })
+  @ApiBody({ type: LoginUserDto })
   async logIn(@Req() request: RequestWithUser) {
     const { user } = request;
     const accessTokenCookie = this.authService.getCookieWithJwtToken(user.id);
@@ -60,6 +78,11 @@ export class AuthController {
 
   @UseGuards(JwtAuthenticationGuard)
   @Post('reset-password')
+  @ApiOperation({
+    summary: 'Reset a user password',
+    description: 'Reset a user password JWT token',
+  })
+  @ApiBody({ type: ResetPasswordDto })
   async resetPassword(
     @Req() request: RequestWithUser,
     @Res() response: Response,
@@ -80,6 +103,10 @@ export class AuthController {
 
   @UseGuards(JwtRefreshGuard)
   @Get('refresh')
+  @ApiOperation({
+    summary: 'Refresh a user token',
+    description: 'Create a new JWT token',
+  })
   refresh(@Req() request: RequestWithUser) {
     const accessTokenCookie = this.authService.getCookieWithJwtToken(
       request.user.id,

@@ -11,6 +11,8 @@ export class DistanceService {
   ) {
     const start = { latitude: startLatitude, longitude: startLongitude };
     const end = { latitude: endLatitude, longitude: endLongitude };
-    return geolib.getDistance(start, end);
+    const distance = geolib.getDistance(start, end);
+
+    return `${distance * 0.000621371} miles`;
   }
 }

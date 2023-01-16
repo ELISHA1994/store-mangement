@@ -3,6 +3,7 @@ import { ConfigService } from '@nestjs/config';
 import * as cookieParser from 'cookie-parser';
 import { useContainer } from 'class-validator';
 import { NestFactory } from '@nestjs/core';
+import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import { AppModule } from './app.module';
 import { APIPrefix } from './constant/constant';
@@ -26,6 +27,15 @@ async function bootstrap() {
     }),
   );
   app.setGlobalPrefix(APIPrefix.Version);
+
+  const swaggerConfig = new DocumentBuilder()
+    .setTitle('Store API')
+    .setDescription('Nest Js Assessment.')
+    .setVersion('1.0')
+    .build();
+
+  const document = SwaggerModule.createDocument(app, swaggerConfig);
+  SwaggerModule.setup('api-docs', app, document);
 
   // enable DI for class-validator
   // this is an important step, for further steps in this article
