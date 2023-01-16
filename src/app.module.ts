@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { APP_FILTER, APP_INTERCEPTOR } from '@nestjs/core';
 import { ConfigModule } from '@nestjs/config';
 import { AppController } from './app.controller';
@@ -11,6 +11,8 @@ import { GoogleModule } from './components/google/google.module';
 import { StoreModule } from './components/store/store.module';
 import { GeneralExceptionFilter } from './shared/filters';
 import { StandardResponseInterceptor } from './shared/interceptors';
+import { LoggerMiddleware } from './middleware/logger.middleware';
+import { LoggerModule } from './logs/logger.module';
 
 const envFilePath: string = getEnvPath(`${__dirname}/common/envs`);
 
@@ -22,6 +24,7 @@ const envFilePath: string = getEnvPath(`${__dirname}/common/envs`);
     AuthModule,
     GoogleModule,
     StoreModule,
+    LoggerModule,
   ],
   controllers: [AppController],
   providers: [
@@ -36,4 +39,8 @@ const envFilePath: string = getEnvPath(`${__dirname}/common/envs`);
     },
   ],
 })
-export class AppModule {}
+export class AppModule implements NestModule {
+  configure(consumer: MiddlewareConsumer): any {
+    consumer.apply(LoggerMiddleware).forRoutes('*');
+  }
+}
